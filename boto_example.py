@@ -5,7 +5,7 @@ import auth
 import os
 import glob
 
-class aws_as():
+class aws_s3():
 	client = None
 	list_buckets = []
 	
@@ -26,6 +26,7 @@ class aws_as():
 	def upload_file(self, bucket_name, file_name, file_path):
 		self.client.upload_file(file_path, bucket_name, file_name)
 
+	#To upload files.
 	def upload_files(self, bucket_name, files):
 		for i in files:
 			upload_file(bucket_name, files[i]['file_name'], files[i]['file_path'])
