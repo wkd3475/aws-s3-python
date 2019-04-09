@@ -9,6 +9,7 @@ class aws_s3():
 	_client = None
 	_list_buckets = []
 	
+	#__init__
 	def __init__(self, access_key, secret_key):
 		self._client = boto3.client(
 			's3',
@@ -18,20 +19,22 @@ class aws_s3():
 
 		response = self._client.list_buckets()
 		self.list_buckets = [bucket['Name'] for bucket in response['Buckets']]
-		
+	
+	#show buckets list
 	def show_list_buckets(self):
 		print(self.list_buckets)
 
-	#upload file, you have to know about file_path.
-	def upload_file(self, bucket_name, file_):
-		print('upload... (%s)' %(file_['file_path']))
-		self._client.upload_file(file_['file_path'], bucket_name, file_['file_name'])
+	#upload file same location
+	def upload_file(self, bucket_name, file_path):
+		print('upload... (%s)' %(file_path))
+		self._client.upload_file(file_path, bucket_name, file_path)
 		print('finish')
 
-	#upload files.
-	def upload_files(self, bucket, files):
-		for file_ in files:
-			self.upload_file(bucket_name, file_)
+	#upload file different location
+	def upload_file(self, bucket_name, file_path, s3_path):
+		print('upload... (%s)' %(file_path))
+		self._client.upload_file(file_path, bucket_name, s3_path)
+		print('finish')
 
 	#upload folder
 	def upload_folder(self, bucket, folder_path):
