@@ -23,13 +23,13 @@ class aws_s3():
 		print(self.list_buckets)
 
 	#To upload file, you have to know about file_path.
-	def upload_file(self, bucket_name, file_name, file_path):
-		self.client.upload_file(file_path, bucket_name, file_name)
+	def upload_file(self, bucket_name, _file):
+		self.client.upload_file(_file['file_path'], bucket_name, _file['file_name'])
 
 	#To upload files.
 	def upload_files(self, bucket_name, files):
 		for i in files:
-			upload_file(bucket_name, files[i]['file_name'], files[i]['file_path'])
+			upload_file(bucket_name, files[i])
 
 	def delete_all_files(self, bucket_name):
 		response = self.client.list_objects_v2(Bucket=bucket_name)
