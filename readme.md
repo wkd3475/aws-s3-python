@@ -1,4 +1,4 @@
-# class aws\_s3
+# class : aws\_s3
 
 ## variables in aws\_s3  
 ```client``` : boto3.client</br>
@@ -18,20 +18,19 @@ show list\_buckets</br>
 upload one file</br>
   
   
-```aws_s3 : upload_files(self, bucket_name, files)```
-upload files  
+```aws_s3 : upload_files(self, bucket_name, files)```</br>
+upload files</br>
  
   
-```aws_s3 : delete_all_files(self, bucket_name)```
-empty bucket  
+```aws_s3 : delete_all_files(self, bucket_name)```</br>
+empty bucket</br>
 
 -------------------------------------------------------
     
-```def get_files(path)```
-	return files ```
+```def get_files(path)``` return : files</br>
 
-files = (list) {['file_name'], [file_path']}  
+files = (list) {['file_name'], [file_path']}</br>
  
-  
-```def show_files(files)```
+
+```def show_files(files)```</br>
 show files contents
