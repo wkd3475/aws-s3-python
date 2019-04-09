@@ -26,7 +26,9 @@ class aws_as():
 	def upload_file(self, bucket_name, file_name, file_path):
 		self.client.upload_file(file_path, bucket_name, file_name)
 
-		
+	def upload_files(self, bucket_name, files):
+		for i in files:
+			upload_file(bucket_name, files[i]['file_name'], files[i]['file_path'])
 
 	def delete_all_files(self, bucket_name):
 		response = self.client.list_objects_v2(Bucket=bucket_name)
@@ -49,20 +51,31 @@ class aws_as():
 		else:
 			print('cancel...')
 						
-		
+def get_files(path):
+	files = []
 
+	path_listdir = path
+	path_glob = path + '*'
+	file_list_listdir = os.listdir(path_listdir)
+	file_list_glob = glob.glob(path_glob)
+	
+	for i in range(len(file_list_listdir)):
+		files.append({'file_name': file_list_listdir[i], 'file_path': file_list_glob[i]})
+	
+	return files
 
-path_listdir = "./upload/"
-path_glob = "./upload/*"
-file_list_listdir = os.listdir(path_listdir)
-file_list_glob = glob.glob(path_glob)
+def show_files(files):
+	for i in range(len(files)):
+		print("file_name : {}".format(files[i]['file_name']))
+		print("file_path : {}".format(files[i]['file_path']))
+	
+def main():
+	files = get_files('./upload/')
+	show_files(files)
 
-print("file_list_listdir : {}".format(file_list_listdir))
-print("file_list_glob : {}".format(file_list_glob))
+	access_key = auth.access_key
+	secret_key = auth.secret_key
+	a = aws_as(access_key, secret_key)
+	a.show_list_buckets()
 
-access_key = auth.access_key
-secret_key = auth.secret_key
-a = aws_as(access_key, secret_key)
-a.show_list_buckets()
-
-a.delete_all_files('python-example-s3cl')
+main()
