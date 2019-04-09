@@ -37,6 +37,7 @@ class aws_s3():
 		print('finish')
 
 	#upload folder
+	#변경 사항이 있는 파일만 업로드하고 싶은데 해당 내용은 fuse를 통해 알아내야함
 	def upload_folder(self, bucket, folder_path):
 		for root, dirs, files in os.walk(folder_path):
 			for file_ in files:
@@ -49,6 +50,7 @@ class aws_s3():
 			
 			try:
 				self._client.head_object(Bucket=bucket, Key=s3_path)
+				#파일이 변경사항이 있으면 upload하는 내용이 추가되어야 하는 부분
 				print('path found on s3! skip %s...' %(s3_path))
 			except:
 				print("uploading %s..." %(s3_path))
@@ -78,7 +80,7 @@ class aws_s3():
 							self._client.delete_object(Bucket=bucket_name, Key=item['Key'])
 		else:
 			print('cancel...')
-			
+
 def get_files(path):
 	files = []
 
@@ -94,10 +96,12 @@ def get_files(path):
 
 def show_files(files):
 	for i in range(len(files)):
-		print("file_name : {}".format(files[i]['file_name']))
+		#print("file_name : {}".format(files[i]['file_name']))
 		print("file_path : {}".format(files[i]['file_path']))
-	
+
+
 def main():
+	#upload폴더가 fuse의 root directory라고 가정
 	files = get_files('./upload/')
 	show_files(files)
 	bucket = 'python-example-s3cl'
