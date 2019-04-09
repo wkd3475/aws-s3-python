@@ -6,7 +6,6 @@ import os
 import glob
 import botocore
 
-#하나의 파일 시스템은 하나의 aws-s3 버킷에만 연결된다고 가정하고 코드 수정할 필요가 있음
 class aws_s3():
 	_client = None
 	_resource = None
@@ -28,7 +27,7 @@ class aws_s3():
 			aws_secret_access_key = secret_key
 		)
 		
-		_bucket = bucket
+		self._bucket = bucket
 
 		response = self._client.list_buckets()
 		self.list_buckets = [bucket['Name'] for bucket in response['Buckets']]
@@ -143,8 +142,8 @@ def main():
 	bucket = auth.bucket
 	client = aws_s3(access_key, secret_key, bucket)
 
-	#list = client.show_list_objects(bucket)
-	#client.upload_folder(bucket, './upload')
+	#list = client.show_list_objects()
+	#client.upload_folder('./upload')
 	client.download_file('hello.py')
 	
 
