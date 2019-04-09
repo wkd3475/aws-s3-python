@@ -1,7 +1,7 @@
-class aws_s3
+class aws\_s3
 ============
 
-#variables in aws_s3
+#variables in aws\_s3
 	client : boto3.client
 	list_buckets : (list) {bucket_name}
 
