@@ -9,7 +9,7 @@
   
 ### functions in aws\_s3
 ```aws_s3 : __init__(self, access_key, secret_key, bucket)```</br>
-=></br>
+**=>**</br>
 1. init aws_access_key_id and aws_secret_access_key to use boto3.client</br>
 2. init aws_access_key_id and aws_secret_access_key to use boto3.resource</br>
 3. init bucket
@@ -17,80 +17,67 @@
   
 
 ```aws_s3 : show_list_buckets(self)```</br>
-=></br>
-show list_buckets</br>
+**=>** show list_buckets</br>
 
 
 ```aws_s3 : show_list_objects(self)``` return : list of Contents in bucket</br>
-=></br>
-show list_objects</br>
+**=>** show list_objects</br>
 
   
 ```aws_s3 : upload_file(self, file_path)```</br>
-=></br>
-upload a file to same location</br>
+**=>** upload a file to same location</br>
   
 
 ```aws_s3 : upload_file(self, file_path, s3_path)```</br>
-=></br>
-upload a file to "s3_path" ex) /hello.py in local file_path to /tmp/hello.py in s3_path</br>
+**=>** upload a file to "s3_path" ex) /hello.py in local file_path to /tmp/hello.py in s3_path</br>
 
   
 ```aws_s3 : upload_folder(self, folder_path)```</br>
-=></br>
-upload folder</br>
+**=>** upload folder</br>
 
 
 ```aws_s3 : upload_all(self)```</br>
-=></br>
-upload all files to s3</br>
+**=>** upload all files to s3</br>
 
 
 ```aws_s3 : delete_file(file_path)```</br>
-=></br>
-not yet!!!</br>
+**=>** **not yet!!!**</br>
 
 
 ```aws_s3 : delete_all(self)```</br>
-=></br>
-empty bucket</br>
+**=>** empty bucket</br>
 
 
 ```aws_s3 : download_file(self, s3_path)```</br>
-=></br>
-download a file "s3_path"</br>
+**=>** download a file "s3_path"</br>
 
 
 ```aws_s3 : download_folder(self, s3_path)```</br>
-=></br>
-download a folder "s3_path"</br>
+**=>** download a folder "s3_path"</br>
 
 
 ```aws_s3 : download_all(self)```</br>
-=></br>
-download all files in bucket</br>
+**=>** download all files in bucket</br>
 
 -------------------------------------------------------
 
 # functions
 ```def get_files(path)``` return : files</br>
 files = (list) {['file_name'], [file_path']}</br>
-=></br>
-to show root dictionary</br>
+**=>** to show root dictionary</br>
  
 
 ```def show_files(files)```</br>
-=></br>
-show files contents</br>
+**=>** show files contents</br>
 
 --------------------------------------------------------
 
 you need auth fold and auth.py file</br>=></br></br>
 aws-s3cl</br>
 &nbsp;&nbsp;ㄴauth</br>
-&nbsp;&nbsp;&nbsp;&nbsp;ㄴauth.py</br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ㄴauth.py</br>
 &nbsp;&nbsp;ㄴaws-s3-python</br>
-&nbsp;&nbsp;&nbsp;&nbsp;ㄴ...</br></br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ㄴ...</br></br>
 
 **auth.py**
 ```python
