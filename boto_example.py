@@ -24,12 +24,17 @@ class aws_s3():
 
 	#To upload file, you have to know about file_path.
 	def upload_file(self, bucket_name, file_):
+		print('upload... (%s)' %(file_['file_path']))
 		self._client.upload_file(file_['file_path'], bucket_name, file_['file_name'])
+		print('finish')
 
 	#To upload files.
 	def upload_files(self, bucket_name, files):
-		for i in files:
-			upload_file(bucket_name, files[i])
+		for file_ in files:
+			self.upload_file(bucket_name, file_)
+
+	def delete_file(self, bucket_name, file_name):
+		print("delete_file")
 
 	def delete_all_files(self, bucket_name):
 		response = self._client.list_objects_v2(Bucket=bucket_name)
@@ -73,10 +78,12 @@ def show_files(files):
 def main():
 	files = get_files('./upload/')
 	show_files(files)
+	bucket = 'python-example-s3cl'
 
 	access_key = auth.access_key
 	secret_key = auth.secret_key
-	a = aws_as(access_key, secret_key)
+	a = aws_s3(access_key, secret_key)
 	a.show_list_buckets()
+	a.upload_file(bucket, files[0])
 
 main()
