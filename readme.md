@@ -69,4 +69,19 @@ to show root dictionary</br>
 ```def show_files(files)```</br>
 show files contents
 
+--------------------------------------------------------
+
+you need auth fold and auth.py file =></br></br>
+aws-s3cl
+</t>ㄴauth</br>
+</t></t>ㄴauth.py</br>
+</t>ㄴaws-s3-python</br>
+</t></t>ㄴ...</br></br>
+
+auth.py
+```{
+	access_key = 'your aws_access_key_id'
+	secret_key = 'your aws_secret_access_key'
+	bucket = 'your bucket_name'
+}```
 
