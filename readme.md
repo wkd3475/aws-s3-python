@@ -88,3 +88,10 @@ aws-s3cl</br>
 }
 ```
 
+--------------------------------------------------------
+
+With this project, you can control aws-s3 easily.
+
+Thank you.
+
+email : wkd3475@gmail.com
