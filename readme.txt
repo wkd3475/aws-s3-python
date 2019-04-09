@@ -1,4 +1,4 @@
-class aws_s3
+<h2>class aws_s3</h2>
 
 #variables in aws_s3
 	client : boto3.client
