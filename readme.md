@@ -1,40 +1,38 @@
-python-aws-s3\_s3
-============
 # class aws\_s3
 
 ## variables in aws\_s3  
-`client : boto3.client  
-`list_buckets : (list) {bucket_name}  
+```client``` : boto3.client
+```list_buckets``` : (list) {bucket_name}  
   
   
-## input aws\_access\_key\_id and aws\_secret\_access\_key to use boto3.client  
-## store bucket list ==> list\_buckets  
-`def __init__(self, access_key, secret_key)  
+```aws_s3 : __init__(self, access_key, secret_key)```
+input aws_access_key_id and aws_secret_access_key to use boto3.client  
+store bucket list ==> list\_buckets  
+  
+
+```aws_s3 : show_list_buckets(self)```
+show list\_buckets  
+
+  
+```aws_s3 : def upload_file(self, bucket_name, file)```
+upload one file  
   
   
-## show list\_buckets  
-`def show_list_buckets(self)  
+```aws_s3 : upload_files(self, bucket_name, files)```
+upload files  
+ 
   
-  
-## upload one file  
-`def upload_file(self, bucket_name, file)  
-  
-  
-## upload files  
-`def upload_files(self, bucket_name, files)  
-  
-  
-## empty bucket  
-`def delete_all_files(self, bucket_name)
+```aws_s3 : delete_all_files(self, bucket_name)```
+empty bucket  
 
 
 -------------------------------------------------------
+    
+```def get_files(path)
+	return files ```
+
+files = (list) {['file_name'], [file_path']}  
+ 
   
-# files structure  
-## files = (list) {['file_name'], [file_path']}  
-`def get_files(path)  
-`	return files  
-  
-  
-## show files' contents  
-`def show_files(files)  
+```def show_files(files)```
+show files contents
