@@ -41,13 +41,13 @@ class aws_s3():
 		list = print(self._client.list_objects(Bucket=self._bucket)['Contents'])
 		return list
 
-	#upload file same location
+	#upload a file to same location
 	def upload_file(self, file_path):
 		print('upload... (%s)' %(file_path))
 		self._client.upload_file(file_path, self._bucket, file_path)
 		print('finish')
 
-	#upload file different location
+	#upload a file to different location
 	def upload_file(self, file_path, s3_path):
 		print('upload... (%s)' %(file_path))
 		self._client.upload_file(file_path, self._bucket, s3_path)
@@ -72,12 +72,14 @@ class aws_s3():
 			except:
 				print("uploading %s..." %(s3_path))
 				self._client.upload_file(local_path, self._bucket, s3_path)
+				print("complete")
 			
-
+	#delete a file
 	def delete_file(self, file_name):
 		print("delete_file")
 
-	def delete_all_files(self):
+	#delete all files
+	def delete_all(self):
 		response = self._client.list_objects_v2(Bucket=self._bucket)
 		print('Delete all files in %s(bucket).' %(self._bucket))
 		print('Are you sure? [y, n]')
@@ -98,9 +100,10 @@ class aws_s3():
 		else:
 			print('cancel...')
 	
+	#download a file
 	def download_file(self, s3_path):
 		try:
-			print("download : %s ..." %(s3_path))
+			print("downloading... : %s" %(s3_path))
 			self._resource.Bucket(self._bucket).download_file(s3_path, self._prefix+s3_path)
 			print("complete")
 		except botocore.exceptions.ClientError as e:
@@ -109,6 +112,19 @@ class aws_s3():
 			else:
 				raise
 
+	#download folder
+	def download_folder(self, s3_path):
+		bucket = self._resource.Bucket(self._bucket)
+		for key in bucket.objects.filter(Prefix = s3_path):
+			if not os.path.exists(os.path.dirname(self._prefix+key.key)):
+				os.makedirs(os.path.dirname(self._prefix+key.key))
+			print("downloading... : %s" %(key.key))
+			bucket.download_file(key.key, self._prefix+key.key)
+			print("complete")
+
+	def download_all(self):
+		self.download_folder("")
+			
 def get_files(path):
 	files = []
 
@@ -143,8 +159,9 @@ def main():
 	client = aws_s3(access_key, secret_key, bucket)
 
 	#list = client.show_list_objects()
-	#client.upload_folder('./upload')
-	client.download_file('hello.py')
+	#client.upload_folder('./root')
+	client.download_all()
+	#client.delete_all_files()
 	
 
 main()
