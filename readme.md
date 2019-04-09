@@ -57,7 +57,9 @@ download a folder "s3_path"</br>
 
 ```aws_s3 : download_all(self)```</br>
 download all files in bucket</br>
+
 -------------------------------------------------------
+
 # functions
 ```def get_files(path)``` return : files</br>
 files = (list) {['file_name'], [file_path']}</br>
