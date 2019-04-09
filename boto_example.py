@@ -6,25 +6,25 @@ import os
 import glob
 
 class aws_s3():
-	client = None
-	list_buckets = []
+	_client = None
+	_list_buckets = []
 	
 	def __init__(self, access_key, secret_key):
-		self.client = boto3.client(
+		self._client = boto3.client(
 			's3',
 			aws_access_key_id = access_key,
 			aws_secret_access_key = secret_key
 		)
 
-		response = self.client.list_buckets()
+		response = self._client.list_buckets()
 		self.list_buckets = [bucket['Name'] for bucket in response['Buckets']]
 		
 	def show_list_buckets(self):
 		print(self.list_buckets)
 
 	#To upload file, you have to know about file_path.
-	def upload_file(self, bucket_name, _file):
-		self.client.upload_file(_file['file_path'], bucket_name, _file['file_name'])
+	def upload_file(self, bucket_name, file_):
+		self._client.upload_file(file_['file_path'], bucket_name, file_['file_name'])
 
 	#To upload files.
 	def upload_files(self, bucket_name, files):
@@ -32,7 +32,7 @@ class aws_s3():
 			upload_file(bucket_name, files[i])
 
 	def delete_all_files(self, bucket_name):
-		response = self.client.list_objects_v2(Bucket=bucket_name)
+		response = self._client.list_objects_v2(Bucket=bucket_name)
 		print('Delete all files in %s(bucket).' %(bucket_name))
 		print('Are you sure? [y, n]')
 		answer = input()
@@ -40,15 +40,15 @@ class aws_s3():
 			if 'Contents' in response:
 				for item in response['Contents']:
 					print('deleting file', item['Key'])
-					self.client.delete_object(Bucket=bucket_name, Key=item['Key'])
+					self._client.delete_object(Bucket=bucket_name, Key=item['Key'])
 					while response['KeyCount'] == 1000:
-						response = client.list_objects_v2(
+						response = self._client.list_objects_v2(
 							Bucket=bucket_name,
 							StartAfter=response['Contents'][0]['Key'],
 						)
 						for item in response['Contents']:
 							print('deleting file', item['Key'])
-							self.client.delete_object(Bucket=bucket_name, Key=item['Key'])
+							self._client.delete_object(Bucket=bucket_name, Key=item['Key'])
 		else:
 			print('cancel...')
 						
