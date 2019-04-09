@@ -4,19 +4,31 @@ sys.path.insert(0, '../auth')
 import auth
 import os
 import glob
+import botocore
 
 #하나의 파일 시스템은 하나의 aws-s3 버킷에만 연결된다고 가정하고 코드 수정할 필요가 있음
 class aws_s3():
 	_client = None
+	_resource = None
+	_bucket = None
 	_list_buckets = []
+	_prefix = './root/' #이 값은 추후 fuse의 root directory가 될 것임
 	
 	#__init__
-	def __init__(self, access_key, secret_key):
+	def __init__(self, access_key, secret_key, bucket):
 		self._client = boto3.client(
 			's3',
 			aws_access_key_id = access_key,
 			aws_secret_access_key = secret_key
 		)
+
+		self._resource = boto3.resource(
+			's3',
+			aws_access_key_id = access_key,
+			aws_secret_access_key = secret_key
+		)
+		
+		_bucket = bucket
 
 		response = self._client.list_buckets()
 		self.list_buckets = [bucket['Name'] for bucket in response['Buckets']]
@@ -25,21 +37,26 @@ class aws_s3():
 	def show_list_buckets(self):
 		print(self.list_buckets)
 
+	#show objects list
+	def show_list_objects(self):
+		list = print(self._client.list_objects(Bucket=self._bucket)['Contents'])
+		return list
+
 	#upload file same location
-	def upload_file(self, bucket_name, file_path):
+	def upload_file(self, file_path):
 		print('upload... (%s)' %(file_path))
-		self._client.upload_file(file_path, bucket_name, file_path)
+		self._client.upload_file(file_path, self._bucket, file_path)
 		print('finish')
 
 	#upload file different location
-	def upload_file(self, bucket_name, file_path, s3_path):
+	def upload_file(self, file_path, s3_path):
 		print('upload... (%s)' %(file_path))
-		self._client.upload_file(file_path, bucket_name, s3_path)
+		self._client.upload_file(file_path, self._bucket, s3_path)
 		print('finish')
 
 	#upload folder
 	#변경 사항이 있는 파일만 업로드하고 싶은데 해당 내용은 fuse를 통해 알아내야함
-	def upload_folder(self, bucket, folder_path):
+	def upload_folder(self, folder_path):
 		for root, dirs, files in os.walk(folder_path):
 			for file_ in files:
 				local_path = os.path.join(root, file_)
@@ -47,43 +64,51 @@ class aws_s3():
 				relative_path = os.path.relpath(local_path, folder_path)
 				s3_path = relative_path
 
-			print('searching %s in %s' %(s3_path, bucket))
+			print('searching %s in %s' %(s3_path, self._bucket))
 			
 			try:
-				self._client.head_object(Bucket=bucket, Key=s3_path)
+				self._client.head_object(Bucket=self._bucket, Key=s3_path)
 				#파일이 변경사항이 있으면 upload하는 내용이 추가되어야 하는 부분
 				print('path found on s3! skip %s...' %(s3_path))
 			except:
 				print("uploading %s..." %(s3_path))
-				self._client.upload_file(local_path, bucket, s3_path)
+				self._client.upload_file(local_path, self._bucket, s3_path)
 			
 
-	def delete_file(self, bucket_name, file_name):
+	def delete_file(self, file_name):
 		print("delete_file")
 
-	def delete_all_files(self, bucket_name):
-		response = self._client.list_objects_v2(Bucket=bucket_name)
-		print('Delete all files in %s(bucket).' %(bucket_name))
+	def delete_all_files(self):
+		response = self._client.list_objects_v2(Bucket=self._bucket)
+		print('Delete all files in %s(bucket).' %(self._bucket))
 		print('Are you sure? [y, n]')
 		answer = input()
 		if answer == 'y':
 			if 'Contents' in response:
 				for item in response['Contents']:
 					print('deleting file', item['Key'])
-					self._client.delete_object(Bucket=bucket_name, Key=item['Key'])
+					self._client.delete_object(Bucket=self._bucket, Key=item['Key'])
 					while response['KeyCount'] == 1000:
 						response = self._client.list_objects_v2(
-							Bucket=bucket_name,
+							Bucket=self._bucket,
 							StartAfter=response['Contents'][0]['Key'],
 						)
 						for item in response['Contents']:
 							print('deleting file...', item['Key'])
-							self._client.delete_object(Bucket=bucket_name, Key=item['Key'])
+							self._client.delete_object(Bucket=self._bucket, Key=item['Key'])
 		else:
 			print('cancel...')
 	
-	def download_file(self, bucket, s3_path):
-		self._client.download_file(bucket, s3_path, s3_path)
+	def download_file(self, s3_path):
+		try:
+			print("download : %s ..." %(s3_path))
+			self._resource.Bucket(self._bucket).download_file(s3_path, self._prefix+s3_path)
+			print("complete")
+		except botocore.exceptions.ClientError as e:
+			if e.response['Error']['Code'] == "404":
+				print("The object does no exist.")
+			else:
+				raise
 
 def get_files(path):
 	files = []
@@ -106,7 +131,7 @@ def show_files(files):
 
 def main():
 	#upload폴더가 fuse의 root directory라고 가정
-	files = get_files('./upload/')
+	files = get_files('./root/')
 	show_files(files)
 
 	#사용할 bucket 지정
@@ -115,8 +140,12 @@ def main():
 	#암호키 입력
 	access_key = auth.access_key
 	secret_key = auth.secret_key
-	client = aws_s3(access_key, secret_key)
+	bucket = auth.bucket
+	client = aws_s3(access_key, secret_key, bucket)
 
-	client.upload_folder(bucket, './upload')
+	#list = client.show_list_objects(bucket)
+	#client.upload_folder(bucket, './upload')
+	client.download_file('hello.py')
+	
 
 main()
