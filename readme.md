@@ -72,7 +72,7 @@ files = (list) {['file_name'], [file_path']}</br>
 
 --------------------------------------------------------
 
-you need auth fold and auth.py file</br>=></br></br>
+you need auth folder and auth.py file</br>=></br></br>
 aws-s3cl</br>
 &nbsp;&nbsp;ㄴauth</br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ㄴauth.py</br>
