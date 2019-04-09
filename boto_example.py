@@ -11,7 +11,7 @@ class aws_s3():
 	_resource = None
 	_bucket = None
 	_list_buckets = []
-	_prefix = './root/' #이 값은 추후 fuse의 root directory가 될 것임
+	_prefix = './root' #이 값은 추후 fuse의 root directory가 될 것임
 	
 	#__init__
 	def __init__(self, access_key, secret_key, bucket):
@@ -63,16 +63,20 @@ class aws_s3():
 				relative_path = os.path.relpath(local_path, folder_path)
 				s3_path = relative_path
 
-			print('searching %s in %s' %(s3_path, self._bucket))
+			print('searching (%s) in (bucket : %s)' %(s3_path, self._bucket))
 			
 			try:
 				self._client.head_object(Bucket=self._bucket, Key=s3_path)
 				#파일이 변경사항이 있으면 upload하는 내용이 추가되어야 하는 부분
-				print('path found on s3! skip %s...' %(s3_path))
+				print('path found on s3! skip (%s)...' %(s3_path))
 			except:
-				print("uploading %s..." %(s3_path))
+				print("uploading (%s)..." %(s3_path))
 				self._client.upload_file(local_path, self._bucket, s3_path)
 				print("complete")
+
+	#upload all files
+	def upload_all(self):
+		self.upload_folder(self._prefix)
 			
 	#delete a file
 	def delete_file(self, file_name):
@@ -100,15 +104,16 @@ class aws_s3():
 		else:
 			print('cancel...')
 	
+	#이미 최신 버전 파일이 존재하면 다운로드 안하도록 할 것
 	#download a file
 	def download_file(self, s3_path):
 		try:
-			print("downloading... : %s" %(s3_path))
-			self._resource.Bucket(self._bucket).download_file(s3_path, self._prefix+s3_path)
+			print("downloading... : (%s)" %(s3_path))
+			self._resource.Bucket(self._bucket).download_file(s3_path, self._prefix+'/'+s3_path)
 			print("complete")
 		except botocore.exceptions.ClientError as e:
 			if e.response['Error']['Code'] == "404":
-				print("The object does no exist.")
+				print("The object(%s) does no exist." %(s3_path))
 			else:
 				raise
 
@@ -116,15 +121,20 @@ class aws_s3():
 	def download_folder(self, s3_path):
 		bucket = self._resource.Bucket(self._bucket)
 		for key in bucket.objects.filter(Prefix = s3_path):
-			if not os.path.exists(os.path.dirname(self._prefix+key.key)):
-				os.makedirs(os.path.dirname(self._prefix+key.key))
-			print("downloading... : %s" %(key.key))
-			bucket.download_file(key.key, self._prefix+key.key)
+			try:
+				if not os.path.exists(os.path.dirname(self._prefix+key.key)):
+					os.makedirs(os.path.dirname(self._prefix+'/'+key.key))
+			except:
+				pass
+			print("downloading... : (%s)" %(key.key))
+			bucket.download_file(key.key, self._prefix+'/'+key.key)
 			print("complete")
 
+	#download all files
 	def download_all(self):
 		self.download_folder("")
-			
+
+#to show root dictionary
 def get_files(path):
 	files = []
 
@@ -160,8 +170,9 @@ def main():
 
 	#list = client.show_list_objects()
 	#client.upload_folder('./root')
-	client.download_all()
-	#client.delete_all_files()
+	client.upload_all()
+	#client.download_all()
+	#client.delete_all()
 	
 
 main()
