@@ -22,16 +22,35 @@ class aws_s3():
 	def show_list_buckets(self):
 		print(self.list_buckets)
 
-	#To upload file, you have to know about file_path.
+	#upload file, you have to know about file_path.
 	def upload_file(self, bucket_name, file_):
 		print('upload... (%s)' %(file_['file_path']))
 		self._client.upload_file(file_['file_path'], bucket_name, file_['file_name'])
 		print('finish')
 
-	#To upload files.
-	def upload_files(self, bucket_name, files):
+	#upload files.
+	def upload_files(self, bucket, files):
 		for file_ in files:
 			self.upload_file(bucket_name, file_)
+
+	#upload folder
+	def upload_folder(self, bucket, folder_path):
+		for root, dirs, files in os.walk(folder_path):
+			for file_ in files:
+				local_path = os.path.join(root, file_)
+
+				relative_path = os.path.relpath(local_path, folder_path)
+				s3_path = relative_path
+
+			print('searching %s in %s' %(s3_path, bucket))
+			
+			try:
+				self._client.head_object(Bucket=bucket, Key=s3_path)
+				print('path found on s3! skip %s...' %(s3_path))
+			except:
+				print("uploading %s..." %(s3_path))
+				self._client.upload_file(local_path, bucket, s3_path)
+			
 
 	def delete_file(self, bucket_name, file_name):
 		print("delete_file")
@@ -52,11 +71,11 @@ class aws_s3():
 							StartAfter=response['Contents'][0]['Key'],
 						)
 						for item in response['Contents']:
-							print('deleting file', item['Key'])
+							print('deleting file...', item['Key'])
 							self._client.delete_object(Bucket=bucket_name, Key=item['Key'])
 		else:
 			print('cancel...')
-						
+			
 def get_files(path):
 	files = []
 
@@ -84,6 +103,6 @@ def main():
 	secret_key = auth.secret_key
 	a = aws_s3(access_key, secret_key)
 	a.show_list_buckets()
-	a.upload_file(bucket, files[0])
+	a.delete_all_files(bucket)
 
 main()
