@@ -81,6 +81,9 @@ class aws_s3():
 							self._client.delete_object(Bucket=bucket_name, Key=item['Key'])
 		else:
 			print('cancel...')
+	
+	def download_file(self, bucket, s3_path):
+		self._client.download_file(bucket, s3_path, s3_path)
 
 def get_files(path):
 	files = []
@@ -105,12 +108,15 @@ def main():
 	#upload폴더가 fuse의 root directory라고 가정
 	files = get_files('./upload/')
 	show_files(files)
+
+	#사용할 bucket 지정
 	bucket = 'python-example-s3cl'
 
+	#암호키 입력
 	access_key = auth.access_key
 	secret_key = auth.secret_key
-	a = aws_s3(access_key, secret_key)
-	a.show_list_buckets()
-	#a.delete_all_files(bucket)
+	client = aws_s3(access_key, secret_key)
+
+	client.upload_folder(bucket, './upload')
 
 main()
