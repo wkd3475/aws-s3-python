@@ -1,6 +1,6 @@
 class aws\_s3
 ============
-##class aws\_s3
+## class aws\_s3
 
 #variables in aws\_s3
 	**client** : boto3.client
