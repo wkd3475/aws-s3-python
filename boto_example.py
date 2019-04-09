@@ -5,6 +5,7 @@ import auth
 import os
 import glob
 
+#하나의 파일 시스템은 하나의 aws-s3 버킷에만 연결된다고 가정하고 코드 수정할 필요가 있음
 class aws_s3():
 	_client = None
 	_list_buckets = []
@@ -110,6 +111,6 @@ def main():
 	secret_key = auth.secret_key
 	a = aws_s3(access_key, secret_key)
 	a.show_list_buckets()
-	a.delete_all_files(bucket)
+	#a.delete_all_files(bucket)
 
 main()
